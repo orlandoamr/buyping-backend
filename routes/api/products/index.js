@@ -8,8 +8,7 @@ var Products = new ProductsModel();
 var img = "";
 const multer = require('multer');
 
-//define storage for the images
-
+//Definir la ruta de alamacenamiento de las imágenes
 const storage = multer.diskStorage({
   //destination for files
   destination: function (request, file, callback) {
@@ -23,7 +22,6 @@ const storage = multer.diskStorage({
   },
 });
 
-//upload parameters for multer
 const upload = multer({
   storage: storage,
   limits: {
@@ -66,6 +64,7 @@ router.get('/byloggeduser', async(req, res, next)=>{
     }
 });
 
+//Obtener productos por secciones
 router.get('/facet/:page/:items', async(req, res, next) =>{
     try{
         let {page, items} = req.params;
@@ -93,7 +92,7 @@ router.post('/new',upload.single('image'), async (req, res, next)=>{
             categoryid
         } = req.body;
         console.log(req.body);
-        let imgurl = "http://localhost:3000/public/images/products/" + img;
+        let imgurl = "http://localhost:3000/images/products/" + img;
         //Validaciones
         let result = await Products.addProduct(name, description, price,quantity, status, req.user._id, categoryid, imgurl);
         return res.status(200).json({status : "OK", payload : {msg: "Producto agregando satisfactoriamente"}});

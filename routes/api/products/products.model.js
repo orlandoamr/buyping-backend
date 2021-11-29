@@ -41,6 +41,7 @@ class ProductsModel {
         return result.toArray();
     }
 
+    //Obtener productos por secciones
     async getByFacet(page, itemsPerPage, userId){
         const filter = {};
         console.log(filter);
