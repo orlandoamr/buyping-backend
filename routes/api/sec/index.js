@@ -5,7 +5,7 @@ const mailSender = require('../../../utils/mailer.js');
 let SecModelClass = require('./sec.model.js');
 let SecModel = new SecModelClass();
 
-router.post('/signin', async(req, res, next) => {
+router.post('/login', async(req, res, next) => {
     try{
         const {email, pswd} = req.body;
         let userLogged = await SecModel.getByEmail(email);
@@ -42,9 +42,9 @@ router.post('/signin', async(req, res, next) => {
 
 router.post('/signup', async(req, res, next) => {
     try{
-        const {email, pswd} = req.body;
-        console.log(email + " " + pswd);
-        let userAdded = await SecModel.createNewUser(email, pswd);
+        const {email, pswd, fname, lname, pnumber} = req.body;
+        //console.log(email + " " + pswd);
+        let userAdded = await SecModel.createNewUser(email, pswd, fname, lname, pnumber);
         delete userAdded.password;
         console.log(userAdded);
         res.status(200).json({"msg":"Usuario creado satisfactoriamente"});
@@ -78,9 +78,9 @@ router.put('/forgotpassword/:email', async (req, res, next) => {
    
 });
 
-router.put('/resetpassword', async (req, res, next) => {
+router.put('/resetpassword/:token', async (req, res, next) => {
     try{
-        const {token, newPass} = req.body;
+        const {newPass} = req.body;
 
         jwt.verify(token, process.env.JWT_SECRET, async (error,decodeOne) => {
             if (error){

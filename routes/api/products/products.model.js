@@ -34,10 +34,35 @@ class ProductsModel {
         return result.toArray();
     }
 
-    
+    //Obtener productos de un usuario
+    async getProductsByUser(id){
+        let filter = {"user_id" : new ObjectID(id)};
+        let result = await this.productsColl.find(filter);
+        return result.toArray();
+    }
+
+    async getByFacet(page, itemsPerPage, userId){
+        const filter = {};
+        console.log(filter);
+
+        let cursor = await this.productsColl.find({});
+        let docsMatched = await cursor.count();
+        cursor.skip((itemsPerPage * (page-1)));
+        cursor.limit(itemsPerPage);
+
+        let documents = await cursor.toArray();
+
+        return {
+            docsMatched,
+            documents,
+            page,
+            itemsPerPage
+        }
+
+    }
 
     //Insertar nuevo producto
-    async addProduct(name, description, price, quantity, status, userid, categoryid){
+    async addProduct(name, description, price, quantity, status, userid, categoryid,imgurl){
         let newProduct =  {
             name,
             description,
@@ -46,6 +71,7 @@ class ProductsModel {
             published : new Date(),
             status,
             active : true,
+            imgurl,
             user_id : new ObjectID(userid),
             category_id : new ObjectID(categoryid)
         }
@@ -55,7 +81,7 @@ class ProductsModel {
     }
 
     //Actualizar un producto
-    async updateProduct(id, name, description, price, quantity, status, act, categoryid){
+    async updateProduct(id, name, description, price, quantity, status, act, categoryid,imgurl){
         const filter = {"_id" : new ObjectID(id)};
         let active = (act == "true") ? true : false;
         const updateAction = {"$set" : {
@@ -65,6 +91,7 @@ class ProductsModel {
             quantity,
             status,
             active ,
+            imgurl,
             category_id : categoryid}};
         let result = await this.productsColl.updateOne(filter, updateAction); 
         return result;

@@ -19,10 +19,13 @@ class Sec{
         }
     }
 
-    async createNewUser(email, password){
+    async createNewUser(email, password,firstname,lastname,phonenumber){
         try {
             let user = {
+              firstname,
+              lastname,
               email: email,
+              phonenumber,
               password: await bcrypt.hash(password, 10),
               lastlogin: null,
               lastpasswordchange: null,
