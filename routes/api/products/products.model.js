@@ -1,6 +1,7 @@
 var conn = require('../../../utils/dao');
 var ObjectID = require('mongodb').ObjectId;
 
+
 var _db;
 
 class ProductsModel {
@@ -63,7 +64,7 @@ class ProductsModel {
     }
 
     //Insertar nuevo producto
-    async addProduct(name, description, price, quantity, status, userid, categoryid,imgurl){
+    async addProduct(name, description, price, quantity, status, userid, categoryid,imgurl,contact){
         let newProduct =  {
             name,
             description,
@@ -73,6 +74,7 @@ class ProductsModel {
             status,
             active : true,
             imgurl,
+            contact,
             user_id : new ObjectID(userid),
             category_id : new ObjectID(categoryid)
         }
@@ -82,7 +84,7 @@ class ProductsModel {
     }
 
     //Actualizar un producto
-    async updateProduct(id, name, description, price, quantity, status, act, categoryid,imgurl){
+    async updateProduct(id, name, description, price, quantity, status, act, categoryid,imgurl,contact){
         const filter = {"_id" : new ObjectID(id)};
         let active = (act == "true") ? true : false;
         const updateAction = {"$set" : {
@@ -93,6 +95,7 @@ class ProductsModel {
             status,
             active ,
             imgurl,
+            contact,
             category_id : categoryid}};
         let result = await this.productsColl.updateOne(filter, updateAction); 
         return result;

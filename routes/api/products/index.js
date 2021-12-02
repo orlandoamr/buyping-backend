@@ -32,7 +32,7 @@ const upload = multer({
 //Obtener todos los productos
 router.get('/all', async(req, res, next)=>{
     try{
-        const allProducts = await Products.getActiveProducts(); 
+        let allProducts = await Products.getActiveProducts();
         return res.status(200).json({status : "OK", payload : allProducts});
     }catch(ex){
         console.log(ex);
@@ -83,18 +83,21 @@ router.get('/facet/:page/:items', async(req, res, next) =>{
 //Agregar un nuevo producto
 router.post('/new',upload.single('image'), async (req, res, next)=>{
     try{
+        
         const {
             name,
             description,
             price,
             quantity,
             status,
-            categoryid
+            categoryid,
+            contact
         } = req.body;
+
         console.log(req.body);
         let imgurl = "http://localhost:3000/images/products/" + img;
         //Validaciones
-        let result = await Products.addProduct(name, description, price,quantity, status, req.user._id, categoryid, imgurl);
+        let result = await Products.addProduct(name, description, price,quantity, status, req.user._id, categoryid, imgurl, contact);
         return res.status(200).json({status : "OK", payload : {msg: "Producto agregando satisfactoriamente"}});
     }catch(ex){
         console.log(ex);
@@ -112,12 +115,13 @@ router.put('/update/:id',upload.single('image'), async (req, res, next)=>{
             quantity,
             status,
             active,
+            contact,
             categoryid
         } = req.body;
 
         const {id} = req.params;
         let imgurl = "http://localhost:3000/public/images/products/" + img;
-        let result = await Products.updateProduct(id, name, description, price, quantity, status, active, categoryid, imgurl);
+        let result = await Products.updateProduct(id, name, description, price, quantity, status, active, categoryid, imgurl, contact);
         return res.status(200).json({status : "OK", payload : {msg: "Producto actualizado satisfactoriamente"}});
     }catch(ex){
         console.log(ex);

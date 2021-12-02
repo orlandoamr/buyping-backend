@@ -44,8 +44,13 @@ class Sec{
     }
 
     async getByEmail(email){
-        const filter = {"email" : email};
-        return await this.secColl.findOne(filter);
+      const filter = {"email" : email};
+      return await this.secColl.findOne(filter);
+    }
+
+    async getUserInfo(id){
+      const filter = {_id : new ObjectID(id)};
+      return await this.secColl.findOne(filter);
     }
 
     async getByResetKey(token){
@@ -55,6 +60,11 @@ class Sec{
     
     async comparePassword (rawPassword, dbPassword){
       return await bcrypt.compare(rawPassword, dbPassword);
+    }
+
+    async getUserInfo(id){
+      let filter = {_id : new ObjectID(id)};
+      //let result = await this.secColl.
     }
 
     async updatePassword(id, pass){
