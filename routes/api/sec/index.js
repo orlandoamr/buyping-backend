@@ -36,6 +36,8 @@ router.post('/login', async(req, res, next) => {
         //console.log({email, userLogged});
         return res.status(200).json({msg : "Las credenciales no son válidas"})
     }catch(ex){
+        console.log(ex);
+        console.log("err");
         res.status(500).json({"msg" : "Error"});
     }
 });
@@ -80,7 +82,7 @@ router.put('/forgotpassword/:email', async (req, res, next) => {
 
 router.put('/resetpassword/:token', async (req, res, next) => {
     try{
-        const {newPass} = req.body;
+        const {newPass, token} = req.body;
 
         jwt.verify(token, process.env.JWT_SECRET, async (error,decodeOne) => {
             if (error){
@@ -98,7 +100,7 @@ router.put('/resetpassword/:token', async (req, res, next) => {
             }
         });
     }catch(ex){
-        console.log(ex);
+       console.log(ex);
         return res.status(500).json({"msg" : "Error"});
     }
     

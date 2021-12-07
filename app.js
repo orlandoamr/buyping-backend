@@ -4,7 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require("cors");
-//var imagerouter = require('./public/images');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -37,10 +36,10 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.use('/api', apiRouter); //cors(corsOptions)
+app.use('/api',cors(corsOptions), apiRouter);
 
-app.listen(3001, function () {
-  console.log('CORS-enabled web server listening on port 3001')
+app.listen(3002, function () {
+  console.log('CORS-enabled web server listening on port 3002')
 });
 
 

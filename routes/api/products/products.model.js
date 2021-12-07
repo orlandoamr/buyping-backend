@@ -36,11 +36,24 @@ class ProductsModel {
     }
 
     //Obtener productos de un usuario
-    async getProductsByUser(id){
-        let filter = {"user_id" : new ObjectID(id)};
-        let result = await this.productsColl.find(filter);
-        return result.toArray();
+    async getProductsByUser(page, itemsPerPage,id){
+        let filter = {"user_id": new ObjectID(id)};
+        let cursor = await this.productsColl.find(filter);
+        let docsMatched = await cursor.count();
+        cursor.skip((itemsPerPage * (page-1)));
+        cursor.limit(itemsPerPage);
+
+        let documents = await cursor.toArray();
+
+        return {
+            docsMatched,
+            documents,
+            page,
+            itemsPerPage
+        }
+
     }
+
 
     //Obtener productos por secciones
     async getByFacet(page, itemsPerPage, userId){
@@ -76,7 +89,7 @@ class ProductsModel {
             imgurl,
             contact,
             user_id : new ObjectID(userid),
-            category_id : new ObjectID(categoryid)
+            categoryid
         }
 
         let result = await this.productsColl.insertOne(newProduct);

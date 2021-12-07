@@ -6,6 +6,7 @@ var CategoriesModel = require('../categories/categories.model.js');
 var Categories = new CategoriesModel();
 var Products = new ProductsModel();
 var img = "";
+
 const multer = require('multer');
 
 //Definir la ruta de alamacenamiento de las imágenes
@@ -53,15 +54,19 @@ router.get('/bycategory/:id', async(req, res, next)=>{
 });
 
 //Obtener productos del usuario logeado
-router.get('/byloggeduser', async(req, res, next)=>{
+router.get('/byloggeduser/:page/:items', async(req, res, next)=>{
     try{
-        const productsByUser = await Products.getProductsByUser(req.user._id); 
-        console.log(req.user._id);
-        return res.status(200).json({status : "OK", payload : productsByUser});
+        let {page, items} = req.params;
+        page = parseInt(page) || 1;
+        items = parseInt(items) || 10;
+
+        const products = await Products.getProductsByUser(page, items, req.user._id);
+        
+        return res.status(200).json(products);
     }catch(ex){
         console.log(ex);
-        return res.status(500).json({status: "Error", payload : {msg : "Error al procesar la petición"}});
-    }
+        return res.status(500).json({ msg: "Error al procesar petición" });
+      }
 });
 
 //Obtener productos por secciones
@@ -73,7 +78,7 @@ router.get('/facet/:page/:items', async(req, res, next) =>{
 
         const products = await Products.getByFacet(page, items);
         
-        return res.status(200).json({status : "OK", payload : {"msg" : products}});
+        return res.status(200).json({status : "OK", payload : products});
     }catch(ex){
         console.log(ex);
         return res.status(500).json({ msg: "Error al procesar petición" });
@@ -81,7 +86,7 @@ router.get('/facet/:page/:items', async(req, res, next) =>{
   });
 
 //Agregar un nuevo producto
-router.post('/new',upload.single('image'), async (req, res, next)=>{
+router.post('/new', upload.single('image'), async (req, res, next)=>{
     try{
         
         const {
@@ -96,8 +101,8 @@ router.post('/new',upload.single('image'), async (req, res, next)=>{
 
         console.log(req.body);
         let imgurl = "http://localhost:3000/images/products/" + img;
-        //Validaciones
-        let result = await Products.addProduct(name, description, price,quantity, status, req.user._id, categoryid, imgurl, contact);
+        //Validaciones  
+        let result = await Products.addProduct(name, description, price,quantity, status,  req.user._id, categoryid, imgurl, contact);
         return res.status(200).json({status : "OK", payload : {msg: "Producto agregando satisfactoriamente"}});
     }catch(ex){
         console.log(ex);
